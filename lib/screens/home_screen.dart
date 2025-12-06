@@ -104,6 +104,78 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showAddTaskDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Task'),
+        content: TextField(
+          controller: _todoController,
+          decoration: const InputDecoration(
+            hintText: 'Enter task...',
+            border: OutlineInputBorder(),
+          ),
+          autofocus: true,
+          onSubmitted: (_) {
+            _addTodo();
+            Navigator.pop(context);
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _addTodo();
+              Navigator.pop(context);
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _clearAllTodos() {
+    final todoProvider = Provider.of<TodoProvider>(context, listen: false);
+    if (todoProvider.todos.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No tasks to clear')));
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clear All Tasks'),
+        content: const Text('Are you sure you want to clear all tasks?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              todoProvider.clearAllTodos();
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('All tasks cleared')),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Clear All'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,31 +189,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // UI Overlay
           SafeArea(
-            child: Column(
-              children: [
-                // Top Bar
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Text Wallpaper',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Text(
-                          'Text Wallpaper',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ElevatedButton.icon(
+                        onPressed: _clearAllTodos,
+                        icon: const Icon(Icons.clear_all),
+                        label: const Text('Clear All'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade400,
+                          foregroundColor: Colors.white,
                         ),
                       ),
+                      const SizedBox(width: 8),
                       ElevatedButton.icon(
                         onPressed: _isSaving ? null : _saveWallpaper,
                         icon: _isSaving
@@ -161,59 +242,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                ),
-
-                const Spacer(),
-
-                // Todo Input Area
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _todoController,
-                          decoration: const InputDecoration(
-                            hintText: 'Add a task...',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ),
-                          ),
-                          onSubmitted: (_) => _addTodo(),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: _addTodo,
-                        icon: const Icon(
-                          Icons.add_circle,
-                          color: Colors.deepPurple,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Style Selector Bottom Sheet
-                const StyleSelector(),
-              ],
+                ],
+              ),
             ),
           ),
+
+          // Style Selector Bottom Sheet (Draggable)
+          const StyleSelector(),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _showAddTaskDialog,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Task'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

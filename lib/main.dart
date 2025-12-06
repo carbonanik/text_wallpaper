@@ -4,18 +4,26 @@ import 'providers/todo_provider.dart';
 import 'providers/wallpaper_provider.dart';
 import 'screens/home_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize TodoProvider and load saved todos
+  final todoProvider = TodoProvider();
+  await todoProvider.loadTodos();
+
+  runApp(MyApp(todoProvider: todoProvider));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final TodoProvider todoProvider;
+
+  const MyApp({super.key, required this.todoProvider});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => TodoProvider()),
+        ChangeNotifierProvider.value(value: todoProvider),
         ChangeNotifierProvider(create: (_) => WallpaperProvider()),
       ],
       child: MaterialApp(
