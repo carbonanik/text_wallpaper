@@ -213,17 +213,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Row(
                     children: [
-                      ElevatedButton.icon(
+                      IconButton(
                         onPressed: _clearAllTodos,
-                        icon: const Icon(Icons.clear_all),
-                        label: const Text('Clear All'),
+                        icon: const Icon(Icons.cleaning_services_outlined),
+                        // label: const Text('Clear All'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red.shade400,
                           foregroundColor: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 8),
-                      ElevatedButton.icon(
+                      IconButton(
                         onPressed: _isSaving ? null : _saveWallpaper,
                         icon: _isSaving
                             ? const SizedBox(
@@ -234,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               )
                             : const Icon(Icons.wallpaper),
-                        label: const Text('Set Wallpaper'),
+                        // label: const Text('Set Wallpaper'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
