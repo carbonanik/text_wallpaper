@@ -1,4 +1,4 @@
-package com.example.text_wallpaper
+package com.carbonanik.brain_paper
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -318,6 +318,13 @@ class _ColorPicker extends StatelessWidget {
     Color(0xFFEC4899), // Modern pink
     Color(0xFF14B8A6), // Modern teal
     Color(0xFF6366F1), // Modern indigo
+    ///
+    Color(0xFF1A1A2E), // Deep navy - for Blue gradient
+    Color(0xFF2D1B4E), // Deep purple - for Sunset gradient
+    Color(0xFF4A4A6A), // Slate gray - for Pastel gradient
+    Color(0xFFFEE140), // Bright yellow accent
+    Color(0xFF00F2FE), // Cyan accent
+    Color(0xFFFF6A88), // Coral accent
   ];
 
   @override
@@ -325,6 +332,7 @@ class _ColorPicker extends StatelessWidget {
     return SizedBox(
       height: 50,
       child: ListView.builder(
+        clipBehavior: Clip.none,
         scrollDirection: Axis.horizontal,
         itemCount: colors.length,
         itemBuilder: (context, index) {

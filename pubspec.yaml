@@ -54,9 +54,26 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  launcher_name: ^1.0.2 # check latest version on pub.dev
+  icons_launcher: ^3.0.3
+  change_app_package_name: ^1.4.0
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+launcher_name:
+  default: "BrainPaper" 
+  bn: "ব্রেইন পেপার"
+
+icons_launcher:
+  image_path: "assets/logo/logo_black.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
 
 # The following section is specific to Flutter packages.
 flutter:
