@@ -13,6 +13,6 @@ void main() {
     );
 
     // Verify that the app builds without errors
-    expect(find.text('Text Wallpaper'), findsOneWidget);
+    expect(find.text('BrainPaper'), findsOneWidget);
   });
 }

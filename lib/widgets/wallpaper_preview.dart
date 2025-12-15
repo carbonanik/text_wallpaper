@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/todo_provider.dart';
 import '../providers/wallpaper_provider.dart';
 
@@ -27,7 +28,7 @@ class WallpaperPreview extends StatelessWidget {
                 : null,
             image: wallpaperProvider.style == WallpaperStyle.pattern
                 ? DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       WallpaperProvider.artImages[wallpaperProvider
                           .selectedArtIndex],
                     ),

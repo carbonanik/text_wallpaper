@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Add Task',
+                          'Add Sticky',
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
@@ -320,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
-                      'Text Wallpaper',
+                      'BrainPaper',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -369,8 +369,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddTaskDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('Add Task'),
+        icon: const Icon(Icons.sticky_note_2_rounded),
+        label: const Text('Sticky'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),

@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: wallpaperProvider),
       ],
       child: MaterialApp(
-        title: 'Text Wallpaper',
+        title: 'BrainPaper',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),

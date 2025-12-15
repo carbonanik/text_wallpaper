@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/wallpaper_provider.dart';
 
 class StyleSelector extends StatelessWidget {
@@ -678,11 +679,10 @@ class _ArtPicker extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      imageUrl,
+                    CachedNetworkImage(
+                      imageUrl: imageUrl,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
+                      placeholder: (context, url) {
                         return Container(
                           color: Colors.grey.shade200,
                           child: const Center(
@@ -694,7 +694,7 @@ class _ArtPicker extends StatelessWidget {
                           ),
                         );
                       },
-                      errorBuilder: (context, error, stackTrace) {
+                      errorWidget: (context, url, error) {
                         return Container(
                           color: Colors.grey.shade300,
                           child: Icon(

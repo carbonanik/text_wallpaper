@@ -25,7 +25,7 @@ Yeah, we built this for you (and us).
 - Make your todos look good while they guilt you into productivity
 
 📝 **Simple Task Management**
-- Add tasks with one tap
+- Add sticky notes with one tap
 - Check them off as you complete them
 - Clear all tasks when you need a fresh start
 
@@ -75,8 +75,8 @@ Don't worry, we only use these to make your life easier, not to snoop.
 
 ## 📱 How to Use
 
-1. **Add Your Tasks**
-   - Tap the "Add Task" button
+1. **Add Your Sticky Notes**
+   - Tap the "Add Sticky" button
    - Type what you need to remember
    - Hit enter or tap "Add"
 
