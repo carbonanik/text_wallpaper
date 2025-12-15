@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -107,34 +108,149 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showAddTaskDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Task'),
-        content: TextField(
-          controller: _todoController,
-          decoration: const InputDecoration(
-            hintText: 'Enter task...',
-            border: OutlineInputBorder(),
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.95),
+                      Colors.white.withValues(alpha: 0.85),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.add_task,
+                          size: 24,
+                          color: Colors.grey.shade700,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Add Task',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade800,
+                              ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    TextField(
+                      controller: _todoController,
+                      style: TextStyle(color: Colors.grey.shade800),
+                      cursorColor: Theme.of(context).primaryColor,
+                      decoration: InputDecoration(
+                        hintText: 'What needs to be done?',
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade200,
+                            width: 1.5,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade200,
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                      ),
+                      autofocus: true,
+                      onSubmitted: (_) {
+                        _addTodo();
+                        Navigator.pop(context);
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey.shade600,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: const Text('Cancel'),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () {
+                            _addTodo();
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            'Add',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-          autofocus: true,
-          onSubmitted: (_) {
-            _addTodo();
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _addTodo();
-              Navigator.pop(context);
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -248,14 +364,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           // Style Selector Bottom Sheet (Draggable)
-          const StyleSelector(),
+          StyleSelector(),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddTaskDialog,
         icon: const Icon(Icons.add),
         label: const Text('Add Task'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
