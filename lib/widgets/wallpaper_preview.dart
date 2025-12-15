@@ -25,40 +25,67 @@ class WallpaperPreview extends StatelessWidget {
                     end: Alignment.bottomRight,
                   )
                 : null,
-            // Add pattern support later
-          ),
-          padding: const EdgeInsets.all(32.0),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (todoProvider.todos.isEmpty)
-                  Text(
-                    "No Tasks",
-                    style: GoogleFonts.outfit(
-                      color: wallpaperProvider.textColor.withValues(alpha: 0.5),
-                      fontSize: wallpaperProvider.fontSize,
+            image: wallpaperProvider.style == WallpaperStyle.pattern
+                ? DecorationImage(
+                    image: NetworkImage(
+                      WallpaperProvider.artImages[wallpaperProvider
+                          .selectedArtIndex],
                     ),
+                    fit: BoxFit.cover,
                   )
-                else
-                  ...todoProvider.todos
-                      .where((t) => !t.isDone)
-                      .map(
-                        (todo) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(
-                            todo.text,
-                            textAlign: wallpaperProvider.textAlign,
-                            style: GoogleFonts.outfit(
-                              color: wallpaperProvider.textColor,
-                              fontSize: wallpaperProvider.fontSize,
-                              fontWeight: FontWeight.bold,
-                            ),
+                : null,
+          ),
+          child: Stack(
+            children: [
+              // Overlay for patterns
+              if (wallpaperProvider.style == WallpaperStyle.pattern)
+                Container(
+                  color: Colors.black.withOpacity(
+                    wallpaperProvider.overlayOpacity,
+                  ),
+                ),
+
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (todoProvider.todos.isEmpty)
+                        Text(
+                          "No Tasks",
+                          style: GoogleFonts.getFont(
+                            wallpaperProvider.fontFamily,
+                            color: wallpaperProvider.textColor.withOpacity(0.5),
+                            fontSize: wallpaperProvider.fontSize,
                           ),
-                        ),
-                      ),
-              ],
-            ),
+                        )
+                      else
+                        ...todoProvider.todos
+                            .where((t) => !t.isDone)
+                            .map(
+                              (todo) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                ),
+                                child: Text(
+                                  todo.text,
+                                  textAlign: wallpaperProvider.textAlign,
+                                  style: GoogleFonts.getFont(
+                                    wallpaperProvider.fontFamily,
+                                    color: wallpaperProvider.textColor,
+                                    fontSize: wallpaperProvider.fontSize,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

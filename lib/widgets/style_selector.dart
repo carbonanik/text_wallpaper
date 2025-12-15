@@ -13,9 +13,9 @@ class StyleSelector extends StatelessWidget {
     return DraggableScrollableSheet(
       initialChildSize: 0.4, // Start at 40% of screen height
       minChildSize: 0.1, // Can collapse to 10% (mostly hidden)
-      maxChildSize: 0.7, // Can expand to 70% of screen height
+      maxChildSize: 0.4, // Can expand to 70% of screen height
       snap: true,
-      snapSizes: const [0.1, 0.4, 0.7],
+      snapSizes: const [0.1, 0.4],
       builder: (context, scrollController) {
         return ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -88,23 +88,25 @@ class StyleSelector extends StatelessWidget {
                   const SizedBox(height: 14),
                   Row(
                     children: [
-                      Expanded(
-                        child: _StyleOption(
-                          label: "Solid",
-                          icon: Icons.square,
-                          isSelected: provider.style == WallpaperStyle.solid,
-                          onTap: () => provider.setStyle(WallpaperStyle.solid),
-                        ),
+                      _StyleOption(
+                        label: "Solid",
+                        icon: Icons.square,
+                        isSelected: provider.style == WallpaperStyle.solid,
+                        onTap: () => provider.setStyle(WallpaperStyle.solid),
                       ),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: _StyleOption(
-                          label: "Gradient",
-                          icon: Icons.gradient,
-                          isSelected: provider.style == WallpaperStyle.gradient,
-                          onTap: () =>
-                              provider.setStyle(WallpaperStyle.gradient),
-                        ),
+                      _StyleOption(
+                        label: "Gradient",
+                        icon: Icons.gradient,
+                        isSelected: provider.style == WallpaperStyle.gradient,
+                        onTap: () => provider.setStyle(WallpaperStyle.gradient),
+                      ),
+                      const SizedBox(width: 12),
+                      _StyleOption(
+                        label: "Image",
+                        icon: Icons.image,
+                        isSelected: provider.style == WallpaperStyle.pattern,
+                        onTap: () => provider.setStyle(WallpaperStyle.pattern),
                       ),
                     ],
                   ),
@@ -142,7 +144,170 @@ class StyleSelector extends StatelessWidget {
                         selectedColors: provider.gradientColors,
                         onColorsSelected: provider.setGradientColors,
                       ),
+                    )
+                  else if (provider.style == WallpaperStyle.pattern)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _ColorSection(
+                          title: "Select Art",
+                          icon: Icons.image_search,
+                          child: _ArtPicker(
+                            selectedIndex: provider.selectedArtIndex,
+                            onArtSelected: provider.setArtIndex,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Text(
+                              "Dimness",
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Expanded(
+                              child: Slider(
+                                value: provider.overlayOpacity,
+                                min: 0.0,
+                                max: 0.8,
+                                onChanged: provider.setOverlayOpacity,
+                              ),
+                            ),
+                            Text(
+                              "${(provider.overlayOpacity * 100).toInt()}%",
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
+
+                  // Divider
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    height: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.transparent,
+                          Colors.grey.shade300,
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Typography Section
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.text_fields,
+                            size: 20,
+                            color: Colors.grey.shade700,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Typography",
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade800,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Font Family Picker
+                      SizedBox(
+                        height: 40,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children:
+                              [
+                                'Outfit',
+                                'Roboto',
+                                'Lora',
+                                'Montserrat',
+                                'Poppins',
+                                'Oswald',
+                                'Playfair Display',
+                                'Inter',
+                              ].map((font) {
+                                final isSelected = provider.fontFamily == font;
+                                return GestureDetector(
+                                  onTap: () => provider.setFontFamily(font),
+                                  child: Container(
+                                    margin: const EdgeInsets.only(right: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Theme.of(context).primaryColor
+                                            : Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      font,
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.grey.shade700,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Font Size Slider
+                      Row(
+                        children: [
+                          Text(
+                            "Size",
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Expanded(
+                            child: Slider(
+                              value: provider.fontSize,
+                              min: 12.0,
+                              max: 96.0,
+                              onChanged: provider.setFontSize,
+                            ),
+                          ),
+                          Text(
+                            provider.fontSize.toInt().toString(),
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
 
                   // Divider
                   Container(
@@ -162,12 +327,15 @@ class StyleSelector extends StatelessWidget {
                   // Text Color Section
                   _ColorSection(
                     title: "Text Color",
-                    icon: Icons.text_fields,
+                    icon: Icons.color_lens,
                     child: _ColorPicker(
                       selectedColor: provider.textColor,
                       onColorSelected: provider.setTextColor,
                     ),
                   ),
+
+                  // Bottom Padding
+                  const SizedBox(height: 124),
                 ],
               ),
             ),
@@ -272,25 +440,35 @@ class _StyleOption extends StatelessWidget {
                     ]
                   : null,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 18,
-                  color: isSelected ? Colors.white : Colors.grey.shade700,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: TextStyle(
+            child: isSelected
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        icon,
+                        size: 18,
+                        color: isSelected ? Colors.white : Colors.grey.shade700,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.grey.shade700,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  )
+                : Icon(
+                    icon,
+                    size: 18,
                     color: isSelected ? Colors.white : Colors.grey.shade700,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 15,
                   ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -446,6 +624,101 @@ class _GradientPicker extends StatelessWidget {
               child: isSelected
                   ? const Icon(Icons.check, color: Colors.white, size: 24)
                   : null,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ArtPicker extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onArtSelected;
+
+  const _ArtPicker({required this.selectedIndex, required this.onArtSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 70,
+      child: ListView.builder(
+        clipBehavior: Clip.none,
+        scrollDirection: Axis.horizontal,
+        itemCount: WallpaperProvider.artImages.length,
+        itemBuilder: (context, index) {
+          final imageUrl = WallpaperProvider.artImages[index];
+          final isSelected = selectedIndex == index;
+
+          return GestureDetector(
+            onTap: () => onArtSelected(index),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 70,
+              height: 70,
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected
+                      ? Theme.of(context).primaryColor
+                      : Colors.transparent,
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          color: Colors.grey.shade200,
+                          child: const Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade300,
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            color: Colors.grey.shade500,
+                            size: 24,
+                          ),
+                        );
+                      },
+                    ),
+                    if (isSelected)
+                      Container(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        child: const Center(
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
           );
         },

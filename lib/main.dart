@@ -11,20 +11,31 @@ void main() async {
   final todoProvider = TodoProvider();
   await todoProvider.loadTodos();
 
-  runApp(MyApp(todoProvider: todoProvider));
+  // Initialize WallpaperProvider and load settings
+  final wallpaperProvider = WallpaperProvider();
+  await wallpaperProvider.loadSettings();
+
+  runApp(
+    MyApp(todoProvider: todoProvider, wallpaperProvider: wallpaperProvider),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final TodoProvider todoProvider;
+  final WallpaperProvider wallpaperProvider;
 
-  const MyApp({super.key, required this.todoProvider});
+  const MyApp({
+    super.key,
+    required this.todoProvider,
+    required this.wallpaperProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: todoProvider),
-        ChangeNotifierProvider(create: (_) => WallpaperProvider()),
+        ChangeNotifierProvider.value(value: wallpaperProvider),
       ],
       child: MaterialApp(
         title: 'Text Wallpaper',
