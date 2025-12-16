@@ -41,6 +41,8 @@ icons_launcher:
   platforms:
     android:
       enable: true
+      adaptive_background_image: "assets/logo/logo_background.png"
+      adaptive_foreground_image: "assets/logo/logo_foreground.png"
     ios:
       enable: true
 
