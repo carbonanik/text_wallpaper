@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS v4 Browser -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Iconify Icons -->
+  <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
+
+  <style type="text/tailwindcss">
+    :root {
+--card: rgba(255, 255, 255, 0.7); --ring: #2563eb; --input: #f1f5f9; --muted: #f1f5f9; --accent: #bfdbfe; --border: #e2e8f0; --chart1: #1e3a8a; --chart2: #3b82f6; --chart3: #60a5fa; --chart4: #93c5fd; --chart5: #dbeafe; --radius: 1.5rem; --popover: rgba(255, 255, 255, 0.85); --primary: #1e3a8a; --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; --font-serif: Georgia, serif; --secondary: #e2e8f0; --background: #f8fafc; --foreground: #0f172a; --destructive: #ef4444; --font-heading: "SF Pro Display", "Inter", sans-serif; --card-foreground: #0f172a; --muted-foreground: #64748b; --accent-foreground: #1e3a8a; --popover-foreground: #0f172a; --primary-foreground: #ffffff; --secondary-foreground: #1e293b; --destructive-foreground: #ffffff
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading, var(--font-sans));
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  button, [role="button"] {
+    cursor: pointer;
+  }
+}
+</style>
+</head>
+
+<body>
+  <!-- Screen: Editor -->
+  <div class="flex flex-col min-h-screen bg-background text-foreground font-sans relative overflow-hidden"
+    data-element-id="e1">
+
+    <!-- Background Wallpaper Layer -->
+    <div class="absolute inset-0 z-0" data-element-id="e2">
+      <img
+        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&amp;w=2670&amp;auto=format&amp;fit=crop"
+        alt="Mountain Landscape" class="w-full h-full object-cover" data-element-id="e3">
+      <!-- Darkening Overlay -->
+      <div class="absolute inset-0 bg-black/40" data-element-id="e4"></div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <div class="relative z-20 flex items-center justify-between px-4 pt-12 pb-4" data-element-id="e5">
+      <!-- Brand Pill -->
+      <div class="bg-black/60 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 border border-white/10"
+        data-element-id="e6">
+        <span class="text-white text-sm font-semibold tracking-wide" data-element-id="e7">BrainPaper</span>
+      </div>
+
+      <!-- Top Actions -->
+      <div class="flex items-center gap-3" data-element-id="e8">
+        <button
+          class="size-10 rounded-full bg-[#FF6B6B] text-white flex items-center justify-center shadow-lg hover:bg-[#ff5252] transition-colors"
+          data-element-id="e9">
+          <iconify-icon icon="solar:broom-bold" class="text-[20px]" data-element-id="e10"></iconify-icon>
+        </button>
+        <button
+          class="size-10 rounded-full bg-white text-black flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors"
+          data-element-id="e11">
+          <iconify-icon icon="solar:gallery-bold" class="text-[20px]" data-element-id="e12"></iconify-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Canvas Area (Text Content) -->
+    <div class="relative z-10 flex-1 flex flex-col items-center justify-center px-8 pb-32" data-element-id="e13">
+      <h1 class="text-[#FCD34D] text-center font-heading font-bold text-5xl leading-tight drop-shadow-xl select-none"
+        style="text-shadow: 0 4px 12px rgba(0,0,0,0.5);" data-element-id="e14">
+        Do 10 pushups<br data-element-id="e15">after waking up<br data-element-id="e16">today
+      </h1>
+    </div>
+
+    <!-- Editor Bottom Sheet -->
+    <div
+      class="absolute bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur-xl rounded-t-[2rem] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-white/20 flex flex-col max-h-[60vh] overflow-y-auto pb-8"
+      data-element-id="e17">
+
+      <!-- Drag Handle -->
+      <div class="w-full flex justify-center pt-3 pb-1" data-element-id="e18">
+        <div class="w-12 h-1.5 bg-muted-foreground/30 rounded-full" data-element-id="e19"></div>
+      </div>
+
+      <div class="px-6 py-4 space-y-6" data-element-id="e20">
+
+        <!-- Section: Background Style -->
+        <div class="space-y-3" data-element-id="e21">
+          <div class="flex items-center gap-2 text-muted-foreground" data-element-id="e22">
+            <iconify-icon icon="solar:pallete-2-linear" class="text-[18px]" data-element-id="e23"></iconify-icon>
+            <span class="text-sm font-medium" data-element-id="e24">Background Style</span>
+          </div>
+
+          <div class="flex gap-3" data-element-id="e25">
+            <!-- Solid Option -->
+            <button
+              class="flex-1 h-12 rounded-xl bg-muted border border-transparent hover:border-primary/20 flex items-center justify-center gap-2 transition-all"
+              data-element-id="e26">
+              <div class="size-4 bg-foreground rounded-sm" data-element-id="e27"></div>
+              <span class="text-sm font-medium text-muted-foreground" data-element-id="e28">Solid</span>
+            </button>
+
+            <!-- Image Option (Active) -->
+            <button
+              class="flex-1 h-12 rounded-xl bg-primary/10 border border-primary text-primary flex items-center justify-center gap-2 shadow-sm transition-all"
+              data-element-id="e29">
+              <iconify-icon icon="solar:gallery-bold" class="text-[18px]" data-element-id="e30"></iconify-icon>
+              <span class="text-sm font-medium" data-element-id="e31">Image</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section: Select Art (Horizontal Scroll) -->
+        <div class="space-y-3" data-element-id="e32">
+          <div class="flex items-center justify-between" data-element-id="e33">
+            <div class="flex items-center gap-2 text-muted-foreground" data-element-id="e34">
+              <iconify-icon icon="solar:gallery-wide-linear" class="text-[18px]" data-element-id="e35"></iconify-icon>
+              <span class="text-sm font-medium" data-element-id="e36">Select Art</span>
+            </div>
+          </div>
+
+          <div class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide" data-element-id="e37">
+            <!-- Abstract Item -->
+            <button
+              class="relative flex-shrink-0 size-16 rounded-2xl overflow-hidden border-2 border-transparent hover:scale-105 transition-transform"
+              data-element-id="e38">
+              <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&amp;h=150&amp;fit=crop"
+                class="w-full h-full object-cover" alt="Abstract" data-element-id="e39">
+            </button>
+
+            <!-- Nature Item (Active) -->
+            <button
+              class="relative flex-shrink-0 size-16 rounded-2xl overflow-hidden border-2 border-primary ring-2 ring-primary/20 hover:scale-105 transition-transform"
+              data-element-id="e40">
+              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=150&amp;h=150&amp;fit=crop"
+                class="w-full h-full object-cover" alt="Nature" data-element-id="e41">
+              <div class="absolute inset-0 bg-black/20 flex items-center justify-center" data-element-id="e42">
+                <iconify-icon icon="solar:check-circle-bold" class="text-[24px] text-white"
+                  data-element-id="e43"></iconify-icon>
+              </div>
+            </button>
+
+            <!-- Wood Item -->
+            <button
+              class="relative flex-shrink-0 size-16 rounded-2xl overflow-hidden border-2 border-transparent hover:scale-105 transition-transform"
+              data-element-id="e44">
+              <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=150&amp;h=150&amp;fit=crop"
+                class="w-full h-full object-cover" alt="Wood" data-element-id="e45">
+            </button>
+
+            <!-- Gradient Item -->
+            <button
+              class="relative flex-shrink-0 size-16 rounded-2xl overflow-hidden border-2 border-transparent hover:scale-105 transition-transform"
+              data-element-id="e46">
+              <div class="w-full h-full bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400"
+                data-element-id="e47"></div>
+            </button>
+
+            <!-- Minimal Item -->
+            <button
+              class="relative flex-shrink-0 size-16 rounded-2xl overflow-hidden border-2 border-transparent hover:scale-105 transition-transform bg-muted flex items-center justify-center"
+              data-element-id="e48">
+              <div class="w-full h-full bg-slate-200" data-element-id="e49"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="h-px bg-border w-full" data-element-id="e50"></div>
+
+        <!-- Section: Typography -->
+        <div class="space-y-4" data-element-id="e51">
+          <div class="flex items-center gap-2 text-muted-foreground" data-element-id="e52">
+            <iconify-icon icon="solar:text-field-linear" class="text-[18px]" data-element-id="e53"></iconify-icon>
+            <span class="text-sm font-medium" data-element-id="e54">Typography</span>
+          </div>
+
+          <!-- Font Family List -->
+          <div class="flex gap-2 overflow-x-auto pb-1 -mx-6 px-6 scrollbar-hide" data-element-id="e55">
+            <button class="px-4 py-2 rounded-full bg-muted text-muted-foreground text-sm font-medium whitespace-nowrap"
+              data-element-id="e56">Outfit</button>
+            <button
+              class="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium whitespace-nowrap shadow-md shadow-primary/20"
+              data-element-id="e57">Roboto</button>
+            <button class="px-4 py-2 rounded-full bg-muted text-muted-foreground text-sm font-medium whitespace-nowrap"
+              data-element-id="e58">Lora</button>
+            <button class="px-4 py-2 rounded-full bg-muted text-muted-foreground text-sm font-medium whitespace-nowrap"
+              data-element-id="e59">Montserrat</button>
+            <button class="px-4 py-2 rounded-full bg-muted text-muted-foreground text-sm font-medium whitespace-nowrap"
+              data-element-id="e60">Pop</button>
+          </div>
+
+          <!-- Size Slider -->
+          <div class="flex items-center gap-4 pt-2" data-element-id="e61">
+            <span class="text-xs font-medium text-muted-foreground w-8" data-element-id="e62">Size</span>
+            <div class="relative flex-1 h-6 flex items-center" data-element-id="e63">
+              <div class="absolute w-full h-1 bg-secondary rounded-full" data-element-id="e64"></div>
+              <div class="absolute h-1 bg-primary rounded-full" style="width: 46%" data-element-id="e65"></div>
+              <div
+                class="absolute size-5 bg-primary rounded-full shadow-md border-2 border-background cursor-pointer hover:scale-110 transition-transform"
+                style="left: 46%" data-element-id="e66"></div>
+            </div>
+            <span class="text-xs font-medium text-foreground w-6 text-right" data-element-id="e67">46</span>
+          </div>
+
+          <!-- Text Color -->
+          <div class="pt-2" data-element-id="e68">
+            <div class="flex items-center justify-between mb-3" data-element-id="e69">
+              <span class="text-xs font-medium text-muted-foreground" data-element-id="e70">Text Color</span>
+            </div>
+            <div class="flex justify-between items-center px-1" data-element-id="e71">
+              <button class="size-10 rounded-full bg-black border border-border shadow-sm"
+                data-element-id="e72"></button>
+              <button class="size-10 rounded-full bg-white border border-border shadow-sm"
+                data-element-id="e73"></button>
+              <button class="size-10 rounded-full bg-[#EF4444] border border-transparent shadow-sm"
+                data-element-id="e74"></button>
+              <button class="size-10 rounded-full bg-[#10B981] border border-transparent shadow-sm"
+                data-element-id="e75"></button>
+              <button class="size-10 rounded-full bg-[#3B82F6] border border-transparent shadow-sm"
+                data-element-id="e76"></button>
+              <button
+                class="size-10 rounded-full bg-[#F59E0B] border-2 border-primary/50 ring-2 ring-primary/20 shadow-sm relative"
+                data-element-id="e77">
+                <iconify-icon icon="solar:check-circle-bold"
+                  class="absolute -top-1 -right-1 text-[16px] text-primary bg-background rounded-full"
+                  data-element-id="e78"></iconify-icon>
+              </button>
+              <button class="size-10 rounded-full bg-[#8B5CF6] border border-transparent shadow-sm"
+                data-element-id="e79"></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Floating Sticky Button -->
+    <div class="fixed bottom-6 right-6 z-50" data-element-id="e80">
+      <button
+        class="h-12 pl-4 pr-5 rounded-xl bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
+        data-element-id="e81">
+        <iconify-icon icon="solar:widget-add-bold" class="text-[20px]" data-element-id="e82"></iconify-icon>
+        <span class="font-semibold text-sm" data-element-id="e83">Sticky</span>
+      </button>
+    </div>
+
+  </div>
+</body>
+
+</html>
