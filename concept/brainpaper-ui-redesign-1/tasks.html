@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 Browser -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Iconify Icons -->
+  <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
+
+  <style type="text/tailwindcss">
+:root {
+--card: rgba(255, 255, 255, 0.7); --ring: #2563eb; --input: #f1f5f9; --muted: #f1f5f9; --accent: #bfdbfe; --border: #e2e8f0; --chart1: #1e3a8a; --chart2: #3b82f6; --chart3: #60a5fa; --chart4: #93c5fd; --chart5: #dbeafe; --radius: 1.5rem; --popover: rgba(255, 255, 255, 0.85); --primary: #1e3a8a; --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; --font-serif: Georgia, serif; --secondary: #e2e8f0; --background: #f8fafc; --foreground: #0f172a; --destructive: #ef4444; --font-heading: "SF Pro Display", "Inter", sans-serif; --card-foreground: #0f172a; --muted-foreground: #64748b; --accent-foreground: #1e3a8a; --popover-foreground: #0f172a; --primary-foreground: #ffffff; --secondary-foreground: #1e293b; --destructive-foreground: #ffffff
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading, var(--font-sans));
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  button, [role="button"] {
+    cursor: pointer;
+  }
+}
+</style>
+</head>
+<body>
+<!-- Screen: Tasks -->
+<div class="flex flex-col min-h-screen bg-background text-foreground font-sans pb-28 relative overflow-hidden" data-element-id="e1">
+  
+  <!-- Header -->
+  <header class="flex items-center justify-between px-6 pt-12 pb-4 z-10" data-element-id="e2">
+    <div data-element-id="e3">
+      <h1 class="text-2xl font-heading font-bold text-foreground" data-element-id="e4">My Wall</h1>
+      <p class="text-sm text-muted-foreground" data-element-id="e5">Manage your brain paper</p>
+    </div>
+    <button class="size-10 rounded-full bg-card border border-border flex items-center justify-center text-foreground shadow-sm hover:bg-muted transition-colors" data-element-id="e6">
+      <div class="flex items-center justify-center" data-element-id="e7">
+        <iconify-icon icon="solar:settings-linear" class="text-[24px] text-foreground" data-element-id="e8"></iconify-icon>
+      </div>
+    </button>
+  </header>
+
+  <!-- Active on Wallpaper Section -->
+  <section class="px-4 mb-8" data-element-id="e9">
+    <div class="flex items-center justify-between mb-3 px-2" data-element-id="e10">
+      <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wider" data-element-id="e11">Active on Wallpaper</h2>
+      <button class="text-xs font-medium text-primary flex items-center gap-1" data-element-id="e12">
+        Preview
+        <div class="flex items-center justify-center" data-element-id="e13">
+          <iconify-icon icon="solar:eye-linear" class="text-[14px] text-primary" data-element-id="e14"></iconify-icon>
+        </div>
+      </button>
+    </div>
+
+    <!-- Wallpaper Preview Card -->
+    <div class="relative w-full h-72 rounded-[2rem] overflow-hidden shadow-xl border border-border group" data-element-id="e15">
+      <!-- Background Image -->
+      <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" alt="Wallpaper" class="absolute inset-0 w-full h-full object-cover" data-element-id="e16">
+      
+      <!-- Overlay Gradient -->
+      <div class="absolute inset-0 bg-black/30" data-element-id="e17"></div>
+
+      <!-- Content on Wallpaper -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center" data-element-id="e18">
+        <h3 class="text-3xl font-heading font-black text-yellow-400 leading-tight drop-shadow-md mb-2" style="font-family: 'Oswald', sans-serif;" data-element-id="e19">
+          DO 10 PUSH UP<br data-element-id="e20">AFTER WAKING UP<br data-element-id="e21">EVERYDAY
+        </h3>
+      </div>
+
+      <!-- Glassmorphic Controls -->
+      <div class="absolute bottom-4 left-4 right-4 p-3 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-between shadow-lg" data-element-id="e22">
+        <div class="flex items-center gap-3" data-element-id="e23">
+          <div class="size-8 rounded-full bg-yellow-400 flex items-center justify-center shadow-inner" data-element-id="e24">
+            <div class="flex items-center justify-center" data-element-id="e25">
+              <iconify-icon icon="solar:text-field-bold" class="text-[16px] text-yellow-900" data-element-id="e26"></iconify-icon>
+            </div>
+          </div>
+          <div class="flex flex-col" data-element-id="e27">
+            <span class="text-xs text-white/80 font-medium" data-element-id="e28">Typography</span>
+            <span class="text-xs text-white font-bold" data-element-id="e29">Bebas Neue</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-2" data-element-id="e30">
+          <button class="size-8 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors text-white" data-element-id="e31">
+            <div class="flex items-center justify-center" data-element-id="e32">
+              <iconify-icon icon="solar:pen-new-square-linear" class="text-[16px] text-white" data-element-id="e33"></iconify-icon>
+            </div>
+          </button>
+          <button class="size-8 rounded-full bg-red-500/80 hover:bg-red-600/80 flex items-center justify-center transition-colors text-white" data-element-id="e34">
+            <div class="flex items-center justify-center" data-element-id="e35">
+              <iconify-icon icon="solar:trash-bin-trash-linear" class="text-[16px] text-white" data-element-id="e36"></iconify-icon>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Task Library Section -->
+  <section class="flex-1 px-4 flex flex-col gap-4" data-element-id="e37">
+    <div class="flex items-center justify-between px-2" data-element-id="e38">
+      <h2 class="text-lg font-bold text-foreground" data-element-id="e39">Task Library</h2>
+      <button class="text-sm text-primary font-medium" data-element-id="e40">View All</button>
+    </div>
+
+    <!-- Categories -->
+    <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide px-2 -mx-2" data-element-id="e41">
+      <button class="px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium whitespace-nowrap shadow-md shadow-primary/20" data-element-id="e42">
+        All Tasks
+      </button>
+      <button class="px-5 py-2 rounded-full bg-card text-muted-foreground border border-border text-sm font-medium whitespace-nowrap" data-element-id="e43">
+        Habits
+      </button>
+      <button class="px-5 py-2 rounded-full bg-card text-muted-foreground border border-border text-sm font-medium whitespace-nowrap" data-element-id="e44">
+        Work
+      </button>
+      <button class="px-5 py-2 rounded-full bg-card text-muted-foreground border border-border text-sm font-medium whitespace-nowrap" data-element-id="e45">
+        Quotes
+      </button>
+    </div>
+
+    <!-- Task List -->
+    <div class="flex flex-col gap-3" data-element-id="e46">
+      
+      <!-- Task Item 1 -->
+      <div class="group relative bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-4 active:scale-[0.98] transition-transform" data-element-id="e47">
+        <div class="size-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0" data-element-id="e48">
+          <div class="flex items-center justify-center" data-element-id="e49">
+            <iconify-icon icon="solar:waterdrop-bold-duotone" class="text-[24px] text-blue-600" data-element-id="e50"></iconify-icon>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0" data-element-id="e51">
+          <h4 class="text-base font-semibold text-foreground truncate" data-element-id="e52">Drink 3L Water</h4>
+          <div class="flex items-center gap-2 mt-1" data-element-id="e53">
+            <span class="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-md" data-element-id="e54">Daily Habit</span>
+            <span class="size-1.5 rounded-full bg-blue-400" data-element-id="e55"></span>
+            <span class="text-xs text-muted-foreground" data-element-id="e56">Blue Font</span>
+          </div>
+        </div>
+        <button class="size-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors" data-element-id="e57">
+          <div class="flex items-center justify-center" data-element-id="e58">
+            <iconify-icon icon="solar:add-circle-linear" class="text-[24px] text-current" data-element-id="e59"></iconify-icon>
+          </div>
+        </button>
+      </div>
+
+      <!-- Task Item 2 -->
+      <div class="group relative bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-4 active:scale-[0.98] transition-transform" data-element-id="e60">
+        <div class="size-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0" data-element-id="e61">
+          <div class="flex items-center justify-center" data-element-id="e62">
+            <iconify-icon icon="solar:book-bookmark-bold-duotone" class="text-[24px] text-purple-600" data-element-id="e63"></iconify-icon>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0" data-element-id="e64">
+          <h4 class="text-base font-semibold text-foreground truncate" data-element-id="e65">Read 20 Pages</h4>
+          <div class="flex items-center gap-2 mt-1" data-element-id="e66">
+            <span class="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-md" data-element-id="e67">Evening</span>
+            <span class="size-1.5 rounded-full bg-white border border-gray-300" data-element-id="e68"></span>
+            <span class="text-xs text-muted-foreground" data-element-id="e69">White Font</span>
+          </div>
+        </div>
+        <button class="size-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors" data-element-id="e70">
+          <div class="flex items-center justify-center" data-element-id="e71">
+            <iconify-icon icon="solar:add-circle-linear" class="text-[24px] text-current" data-element-id="e72"></iconify-icon>
+          </div>
+        </button>
+      </div>
+
+      <!-- Task Item 3 -->
+      <div class="group relative bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-4 active:scale-[0.98] transition-transform" data-element-id="e73">
+        <div class="size-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center shrink-0" data-element-id="e74">
+          <div class="flex items-center justify-center" data-element-id="e75">
+            <iconify-icon icon="solar:leaf-bold-duotone" class="text-[24px] text-green-600" data-element-id="e76"></iconify-icon>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0" data-element-id="e77">
+          <h4 class="text-base font-semibold text-foreground truncate" data-element-id="e78">Meditation</h4>
+          <div class="flex items-center gap-2 mt-1" data-element-id="e79">
+            <span class="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-md" data-element-id="e80">Morning</span>
+            <span class="size-1.5 rounded-full bg-green-400" data-element-id="e81"></span>
+            <span class="text-xs text-muted-foreground" data-element-id="e82">Green Font</span>
+          </div>
+        </div>
+        <button class="size-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors" data-element-id="e83">
+          <div class="flex items-center justify-center" data-element-id="e84">
+            <iconify-icon icon="solar:add-circle-linear" class="text-[24px] text-current" data-element-id="e85"></iconify-icon>
+          </div>
+        </button>
+      </div>
+
+       <!-- Task Item 4 -->
+       <div class="group relative bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-4 active:scale-[0.98] transition-transform" data-element-id="e86">
+        <div class="size-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0" data-element-id="e87">
+          <div class="flex items-center justify-center" data-element-id="e88">
+            <iconify-icon icon="solar:cart-large-bold-duotone" class="text-[24px] text-orange-600" data-element-id="e89"></iconify-icon>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0" data-element-id="e90">
+          <h4 class="text-base font-semibold text-foreground truncate" data-element-id="e91">Grocery List</h4>
+          <div class="flex items-center gap-2 mt-1" data-element-id="e92">
+            <span class="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-md" data-element-id="e93">To-Do</span>
+            <span class="size-1.5 rounded-full bg-yellow-400" data-element-id="e94"></span>
+            <span class="text-xs text-muted-foreground" data-element-id="e95">Yellow Font</span>
+          </div>
+        </div>
+        <button class="size-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors" data-element-id="e96">
+          <div class="flex items-center justify-center" data-element-id="e97">
+            <iconify-icon icon="solar:add-circle-linear" class="text-[24px] text-current" data-element-id="e98"></iconify-icon>
+          </div>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Floating Action Button -->
+  <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-30" data-element-id="e99">
+    <button class="size-16 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-transform ring-4 ring-background" data-element-id="e100">
+      <div class="flex items-center justify-center" data-element-id="e101">
+        <iconify-icon icon="solar:add-circle-bold" class="text-[32px] text-primary-foreground" data-element-id="e102"></iconify-icon>
+      </div>
+    </button>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-popover/90 backdrop-blur-lg border-t border-border pb-6 pt-2 px-6 z-20" data-element-id="e103">
+    <div class="flex items-center justify-between max-w-md mx-auto" data-element-id="e104">
+      
+      <!-- Home Tab (Active) -->
+      <button class="flex-1 flex flex-col items-center gap-1 py-2 text-primary group" data-element-id="e105">
+        <div class="flex items-center justify-center p-1 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors" data-element-id="e106">
+          <iconify-icon icon="solar:home-2-bold" class="text-[24px] text-primary" data-element-id="e107"></iconify-icon>
+        </div>
+        <span class="text-[10px] font-medium" data-element-id="e108">Home</span>
+      </button>
+
+      <!-- Spacer for FAB -->
+      <div class="w-16" data-element-id="e109"></div>
+
+      <!-- Templates Tab -->
+      <button class="flex-1 flex flex-col items-center gap-1 py-2 text-muted-foreground hover:text-foreground transition-colors" data-element-id="e110">
+        <div class="flex items-center justify-center p-1" data-element-id="e111">
+          <iconify-icon icon="solar:gallery-minimalistic-linear" class="text-[24px] text-current" data-element-id="e112"></iconify-icon>
+        </div>
+        <span class="text-[10px] font-medium" data-element-id="e113">Templates</span>
+      </button>
+
+      <!-- History Tab -->
+      <button class="flex-1 flex flex-col items-center gap-1 py-2 text-muted-foreground hover:text-foreground transition-colors" data-element-id="e114">
+        <div class="flex items-center justify-center p-1" data-element-id="e115">
+          <iconify-icon icon="solar:history-linear" class="text-[24px] text-current" data-element-id="e116"></iconify-icon>
+        </div>
+        <span class="text-[10px] font-medium" data-element-id="e117">History</span>
+      </button>
+
+    </div>
+  </nav>
+
+</div>
+</body>
+</html>

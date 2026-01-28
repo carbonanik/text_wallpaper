@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS v4 Browser -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Iconify Icons -->
+  <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
+
+  <style type="text/tailwindcss">
+    :root {
+--background: #f8fafc;
+--foreground: #0f172a;
+--card: rgba(255, 255, 255, 0.7);
+--card-foreground: #0f172a;
+--popover: rgba(255, 255, 255, 0.85);
+--popover-foreground: #0f172a;
+--primary: #1e3a8a;
+--primary-foreground: #ffffff;
+--secondary: #e2e8f0;
+--secondary-foreground: #1e293b;
+--muted: #f1f5f9;
+--muted-foreground: #64748b;
+--accent: #bfdbfe;
+--accent-foreground: #1e3a8a;
+--destructive: #ef4444;
+--destructive-foreground: #ffffff;
+--border: #e2e8f0;
+--input: #f1f5f9;
+--ring: #2563eb;
+--chart-1: #1e3a8a;
+--chart-2: #3b82f6;
+--chart-3: #60a5fa;
+--chart-4: #93c5fd;
+--chart-5: #dbeafe;
+--font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+--font-serif: Georgia, serif;
+--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+--font-heading: "SF Pro Display", "Inter", sans-serif;
+--radius: 1.5rem
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading, var(--font-sans));
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  button, [role="button"] {
+    cursor: pointer;
+  }
+}
+</style>
+</head>
+
+<body>
+  <!-- Screen: Studio -->
+  <div class="flex flex-col min-h-screen bg-background text-foreground font-sans overflow-hidden relative">
+
+    <!-- Top Preview Section -->
+    <!-- This section simulates the lock screen preview -->
+    <div class="relative h-[55vh] w-full shrink-0">
+      <!-- Background Image -->
+      <img
+        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80"
+        alt="Preview Background" class="absolute inset-0 w-full h-full object-cover">
+
+      <!-- Dimness Overlay (simulated with opacity) -->
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <!-- Header Overlay -->
+      <div class="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-20">
+        <div class="bg-black/30 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
+          <span class="text-xs font-medium text-white tracking-wide">BrainPaper</span>
+        </div>
+
+        <div class="flex gap-3">
+          <button
+            class="size-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-black/50 transition-colors">
+            <iconify-icon icon="solar:gallery-wide-linear" class="text-[20px] text-white"></iconify-icon>
+          </button>
+          <button
+            class="size-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30 text-white">
+            <iconify-icon icon="solar:check-circle-bold" class="text-[20px] text-white"></iconify-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Content -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center z-10 px-8 text-center">
+        <!-- Time (Decorative) -->
+        <div class="mb-8 opacity-80">
+          <span class="text-6xl font-light text-white tracking-tighter">09:41</span>
+          <div class="text-sm text-white font-medium mt-1">Wednesday, October 25</div>
+        </div>
+
+        <!-- Main Task Text -->
+        <h1 class="text-4xl font-bold text-[#fcd34d] leading-tight drop-shadow-lg font-heading"
+          style="text-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+          Do 10 push up<br>after waking up<br>everyday
+        </h1>
+      </div>
+    </div>
+
+    <!-- Bottom Customization Panel -->
+    <div
+      class="flex-1 bg-background rounded-t-[2.5rem] -mt-10 relative z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden">
+
+      <!-- Handle -->
+      <div class="w-full flex justify-center pt-4 pb-2 shrink-0">
+        <div class="w-12 h-1.5 bg-muted-foreground/20 rounded-full"></div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto px-6 pb-24 pt-2 space-y-8">
+
+        <!-- Background Style Selector -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <iconify-icon icon="solar:layers-minimalistic-bold" class="text-[16px] text-primary"></iconify-icon>
+            Background Style
+          </div>
+          <div class="bg-secondary/50 p-1.5 rounded-2xl flex gap-1">
+            <button
+              class="flex-1 py-2.5 rounded-xl bg-card shadow-sm text-foreground text-sm font-semibold flex items-center justify-center gap-2 transition-all border border-border/50">
+              <iconify-icon icon="solar:gallery-wide-bold" class="text-[18px] text-primary"></iconify-icon>
+              Image
+            </button>
+            <button
+              class="flex-1 py-2.5 rounded-xl text-muted-foreground text-sm font-medium flex items-center justify-center gap-2 hover:bg-white/50 transition-all">
+              <iconify-icon icon="solar:stop-bold" class="text-[18px] text-muted-foreground"></iconify-icon>
+              Solid
+            </button>
+            <button
+              class="flex-1 py-2.5 rounded-xl text-muted-foreground text-sm font-medium flex items-center justify-center gap-2 hover:bg-white/50 transition-all">
+              <iconify-icon icon="solar:widget-2-bold" class="text-[18px] text-muted-foreground"></iconify-icon>
+              Pattern
+            </button>
+          </div>
+        </div>
+
+        <!-- Featured Art / Background Selection -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-end">
+            <div class="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              <iconify-icon icon="solar:gallery-favourite-bold" class="text-[16px] text-primary"></iconify-icon>
+              Select Art
+            </div>
+            <button class="text-xs text-primary font-semibold">View All</button>
+          </div>
+
+          <div class="flex gap-3 overflow-x-auto pb-4 -mx-6 px-6 scrollbar-hide">
+            <!-- Active Item -->
+            <div class="relative shrink-0">
+              <div class="size-20 rounded-2xl overflow-hidden ring-2 ring-primary ring-offset-2 ring-offset-background">
+                <img
+                  src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=200&amp;q=80"
+                  class="w-full h-full object-cover" alt="Art 1">
+              </div>
+              <div class="absolute inset-0 flex items-center justify-center bg-black/20 rounded-2xl">
+                <iconify-icon icon="solar:check-circle-bold"
+                  class="text-[24px] text-white drop-shadow-md"></iconify-icon>
+              </div>
+            </div>
+
+            <!-- Item 2 -->
+            <button
+              class="size-20 rounded-2xl overflow-hidden bg-muted shrink-0 border border-transparent hover:border-primary/50 transition-all">
+              <img
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=200&amp;q=80"
+                class="w-full h-full object-cover opacity-80 hover:opacity-100" alt="Art 2">
+            </button>
+
+            <!-- Item 3 -->
+            <button
+              class="size-20 rounded-2xl overflow-hidden bg-muted shrink-0 border border-transparent hover:border-primary/50 transition-all">
+              <img
+                src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=200&amp;q=80"
+                class="w-full h-full object-cover opacity-80 hover:opacity-100" alt="Art 3">
+            </button>
+
+            <!-- Item 4 -->
+            <button
+              class="size-20 rounded-2xl overflow-hidden bg-muted shrink-0 border border-transparent hover:border-primary/50 transition-all">
+              <img
+                src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=200&amp;q=80"
+                class="w-full h-full object-cover opacity-80 hover:opacity-100" alt="Art 4">
+            </button>
+
+            <!-- Upload Custom -->
+            <button
+              class="size-20 rounded-2xl bg-secondary flex flex-col items-center justify-center gap-1 shrink-0 text-muted-foreground hover:bg-secondary/80 hover:text-primary transition-colors">
+              <iconify-icon icon="solar:upload-square-linear" class="text-[24px]"></iconify-icon>
+              <span class="text-[10px] font-medium">Upload</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <iconify-icon icon="solar:text-square-bold" class="text-[16px] text-primary"></iconify-icon>
+            Typography
+          </div>
+          <div class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
+            <button
+              class="px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-bold shadow-md shadow-primary/20 whitespace-nowrap">
+              Roboto
+            </button>
+            <button
+              class="px-5 py-2.5 rounded-full bg-secondary text-secondary-foreground text-sm font-serif whitespace-nowrap hover:bg-secondary/80">
+              Merriweather
+            </button>
+            <button
+              class="px-5 py-2.5 rounded-full bg-secondary text-secondary-foreground text-sm font-mono whitespace-nowrap hover:bg-secondary/80">
+              Space Mono
+            </button>
+            <button
+              class="px-5 py-2.5 rounded-full bg-secondary text-secondary-foreground text-sm font-sans font-light whitespace-nowrap hover:bg-secondary/80">
+              Inter Light
+            </button>
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="space-y-6 pt-2">
+          <!-- Text Size Slider -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                <iconify-icon icon="solar:text-field-bold" class="text-[18px]"></iconify-icon>
+                Text Size
+              </div>
+              <span class="text-xs font-bold bg-secondary px-2 py-1 rounded-md text-foreground">46px</span>
+            </div>
+            <div class="relative h-6 flex items-center">
+              <div class="absolute w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+                <div class="h-full bg-primary w-[60%] rounded-full"></div>
+              </div>
+              <div
+                class="absolute left-[60%] size-5 bg-white border-2 border-primary rounded-full shadow-md -translate-x-1/2 cursor-pointer hover:scale-110 transition-transform">
+              </div>
+            </div>
+          </div>
+
+          <!-- Dimness Slider -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                <iconify-icon icon="solar:sun-fog-bold" class="text-[18px]"></iconify-icon>
+                Dimness
+              </div>
+              <span class="text-xs font-bold bg-secondary px-2 py-1 rounded-md text-foreground">40%</span>
+            </div>
+            <div class="relative h-6 flex items-center">
+              <div class="absolute w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+                <div class="h-full bg-primary w-[40%] rounded-full"></div>
+              </div>
+              <div
+                class="absolute left-[40%] size-5 bg-white border-2 border-primary rounded-full shadow-md -translate-x-1/2 cursor-pointer hover:scale-110 transition-transform">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Floating Action Button -->
+      <div class="absolute bottom-6 right-6 z-50">
+        <button
+          class="h-14 pl-5 pr-6 bg-primary text-primary-foreground rounded-full shadow-xl shadow-primary/30 flex items-center gap-3 hover:bg-blue-800 transition-colors">
+          <iconify-icon icon="solar:notes-bold" class="text-[24px]"></iconify-icon>
+          <span class="font-bold text-base">Set Sticky</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
