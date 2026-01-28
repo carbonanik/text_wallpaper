@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:sembast/sembast.dart';
+import 'package:uuid/uuid.dart';
+import '../models/wallpaper_model.dart';
+import '../models/brain_text.dart';
+import '../services/database_service.dart';
 
 enum WallpaperStyle { solid, gradient, pattern }
 
 class WallpaperProvider with ChangeNotifier {
-  WallpaperStyle _style = WallpaperStyle.solid;
-  Color _backgroundColor = Colors.black;
-  Color _textColor = Colors.white;
-  double _fontSize = 24.0;
-  TextAlign _textAlign = TextAlign.center;
-  List<Color> _gradientColors = [Colors.blue, Colors.purple];
-  String _fontFamily = 'Outfit';
-  int _selectedArtIndex = 0;
-  double _overlayOpacity = 0.4;
-
   static const List<String> artImages = [
     'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop', // Abstract
     'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1000&auto=format&fit=crop', // Nature Dark
@@ -24,120 +17,235 @@ class WallpaperProvider with ChangeNotifier {
     'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1000&auto=format&fit=crop', // Gradient
   ];
 
-  static const String _storageKey = 'wallpaper_settings';
+  WallpaperModel _activeWallpaper = WallpaperModel(
+    id: 'default',
+    style: WallpaperStyle.solid,
+    backgroundColor: Colors.black.value,
+    textColor: Colors.white.value,
+    fontSize: 24.0,
+    fontFamily: 'Inter',
+    textAlign: 2,
+    gradientColors: [Colors.blue.value, Colors.purple.value],
+    selectedArtIndex: 0,
+    overlayOpacity: 0.4,
+    texts: [],
+    createdAt: DateTime.now(),
+  );
 
-  WallpaperStyle get style => _style;
-  Color get backgroundColor => _backgroundColor;
-  Color get textColor => _textColor;
-  double get fontSize => _fontSize;
-  TextAlign get textAlign => _textAlign;
-  List<Color> get gradientColors => _gradientColors;
-  String get fontFamily => _fontFamily;
-  int get selectedArtIndex => _selectedArtIndex;
-  double get overlayOpacity => _overlayOpacity;
+  final List<WallpaperModel> _savedWallpapers = [];
+  final _store = stringMapStoreFactory.store('wallpapers');
+  final _activeKey = 'active_wallpaper_id';
+  final _metaStore = StoreRef<String, String>('metadata');
+
+  WallpaperModel get activeWallpaper => _activeWallpaper;
+  List<WallpaperModel> get savedWallpapers => _savedWallpapers;
+
+  WallpaperStyle get style => _activeWallpaper.style;
+  Color get backgroundColor => Color(_activeWallpaper.backgroundColor);
+  Color get textColor => Color(_activeWallpaper.textColor);
+  double get fontSize => _activeWallpaper.fontSize;
+  TextAlign get textAlign => TextAlign.values[_activeWallpaper.textAlign];
+  List<Color> get gradientColors =>
+      _activeWallpaper.gradientColors.map((c) => Color(c)).toList();
+  String get fontFamily => _activeWallpaper.fontFamily;
+  int get selectedArtIndex => _activeWallpaper.selectedArtIndex;
+  double get overlayOpacity => _activeWallpaper.overlayOpacity;
 
   Future<void> loadSettings() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final String? settingsJson = prefs.getString(_storageKey);
+      final db = await DatabaseService.instance.database;
 
-      if (settingsJson != null) {
-        final Map<String, dynamic> data = json.decode(settingsJson);
+      final snapshots = await _store.find(db);
+      debugPrint('Loaded ${snapshots.length} wallpapers from DB');
 
-        _style = WallpaperStyle.values[data['style'] ?? 0];
-        _backgroundColor = Color(data['backgroundColor'] ?? Colors.black.value);
-        _textColor = Color(data['textColor'] ?? Colors.white.value);
-        _fontSize = (data['fontSize'] ?? 24.0).toDouble();
-        _textAlign = TextAlign.values[data['textAlign'] ?? 2];
-        _fontFamily = data['fontFamily'] ?? 'Outfit';
-        _selectedArtIndex = data['selectedArtIndex'] ?? 0;
-        _overlayOpacity = (data['overlayOpacity'] ?? 0.4).toDouble();
+      _savedWallpapers.clear();
+      _savedWallpapers.addAll(
+        snapshots.map((s) => WallpaperModel.fromJson(s.value)).toList(),
+      );
 
-        if (data['gradientColors'] != null) {
-          _gradientColors = (data['gradientColors'] as List)
-              .map((c) => Color(c))
-              .toList();
+      final activeId = await _metaStore.record(_activeKey).get(db);
+      debugPrint('Active wallpaper ID from DB: $activeId');
+
+      if (activeId != null) {
+        final activeSnapshot = await _store.record(activeId).get(db);
+        if (activeSnapshot != null) {
+          _activeWallpaper = WallpaperModel.fromJson(activeSnapshot);
+          debugPrint('Active wallpaper loaded: ${_activeWallpaper.id}');
         }
-
-        notifyListeners();
+      } else if (_savedWallpapers.isNotEmpty) {
+        _activeWallpaper = _savedWallpapers.first;
+        debugPrint(
+          'No active ID found, using first saved: ${_activeWallpaper.id}',
+        );
       }
+
+      notifyListeners();
     } catch (e) {
       debugPrint('Error loading wallpaper settings: $e');
     }
   }
 
-  Future<void> _saveSettings() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final Map<String, dynamic> data = {
-        'style': _style.index,
-        'backgroundColor': _backgroundColor.value,
-        'textColor': _textColor.value,
-        'fontSize': _fontSize,
-        'textAlign': _textAlign.index,
-        'fontFamily': _fontFamily,
-        'selectedArtIndex': _selectedArtIndex,
-        'overlayOpacity': _overlayOpacity,
-        'gradientColors': _gradientColors.map((c) => c.value).toList(),
-      };
+  Future<void> saveCurrentAsNew(String name) async {
+    final newWallpaper = _activeWallpaper.copyWith(
+      id: const Uuid().v4(),
+      name: name,
+      createdAt: DateTime.now(),
+      isActive: true,
+    );
 
-      await prefs.setString(_storageKey, json.encode(data));
+    _savedWallpapers.add(newWallpaper);
+    _activeWallpaper = newWallpaper;
+
+    await _saveWallpaperToDb(newWallpaper);
+    await _setActiveId(newWallpaper.id);
+    notifyListeners();
+  }
+
+  Future<void> _saveWallpaperToDb(WallpaperModel wallpaper) async {
+    try {
+      final db = await DatabaseService.instance.database;
+      await _store.record(wallpaper.id).put(db, wallpaper.toJson());
+      debugPrint('Saved wallpaper to DB: ${wallpaper.id}');
+
+      // Update local list to keep gallery fresh
+      final index = _savedWallpapers.indexWhere((w) => w.id == wallpaper.id);
+      if (index != -1) {
+        _savedWallpapers[index] = wallpaper;
+      } else {
+        _savedWallpapers.add(wallpaper);
+      }
     } catch (e) {
-      debugPrint('Error saving wallpaper settings: $e');
+      debugPrint('Error saving wallpaper to DB: $e');
+    }
+  }
+
+  Future<void> _setActiveId(String id) async {
+    try {
+      final db = await DatabaseService.instance.database;
+      await _metaStore.record(_activeKey).put(db, id);
+    } catch (e) {
+      debugPrint('Error setting active ID: $e');
     }
   }
 
   void setStyle(WallpaperStyle style) {
-    _style = style;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(style: style);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setBackgroundColor(Color color) {
-    _backgroundColor = color;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(backgroundColor: color.value);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setTextColor(Color color) {
-    _textColor = color;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(textColor: color.value);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setFontSize(double size) {
-    _fontSize = size;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(fontSize: size);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setTextAlign(TextAlign align) {
-    _textAlign = align;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(textAlign: align.index);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setGradientColors(List<Color> colors) {
-    _gradientColors = colors;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(
+      gradientColors: colors.map((c) => c.value).toList(),
+    );
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setFontFamily(String family) {
-    _fontFamily = family;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(fontFamily: family);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setArtIndex(int index) {
-    _selectedArtIndex = index;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(selectedArtIndex: index);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 
   void setOverlayOpacity(double opacity) {
-    _overlayOpacity = opacity;
-    _saveSettings();
+    _activeWallpaper = _activeWallpaper.copyWith(overlayOpacity: opacity);
+    _saveWallpaperToDb(_activeWallpaper);
+    notifyListeners();
+  }
+
+  Future<void> createNew() async {
+    // Save current before switching
+    await _saveWallpaperToDb(_activeWallpaper);
+
+    final newId = const Uuid().v4();
+    _activeWallpaper = WallpaperModel(
+      id: newId,
+      name: 'Wallpaper ${DateTime.now().hour}:${DateTime.now().minute}',
+      style: WallpaperStyle.solid,
+      backgroundColor: Colors.black.value,
+      textColor: Colors.white.value,
+      fontSize: 24.0,
+      fontFamily: 'Inter',
+      textAlign: 2,
+      gradientColors: [Colors.blue.value, Colors.purple.value],
+      selectedArtIndex: 0,
+      overlayOpacity: 0.4,
+      texts: [],
+      createdAt: DateTime.now(),
+    );
+
+    // Persist the new one and set as active
+    await _saveWallpaperToDb(_activeWallpaper);
+    await _setActiveId(newId);
+
+    notifyListeners();
+  }
+
+  void setActiveWallpaper(WallpaperModel wallpaper) {
+    _activeWallpaper = wallpaper;
+    _setActiveId(wallpaper.id);
+    notifyListeners();
+  }
+
+  void setTexts(List<BrainText> texts) {
+    _activeWallpaper = _activeWallpaper.copyWith(texts: texts);
+    _saveWallpaperToDb(_activeWallpaper);
+    notifyListeners();
+  }
+
+  void addText(String text) {
+    if (text.isEmpty) return;
+    final newText = BrainText(text: text);
+    final updatedTexts = List<BrainText>.from(_activeWallpaper.texts)
+      ..add(newText);
+    _activeWallpaper = _activeWallpaper.copyWith(texts: updatedTexts);
+    _saveWallpaperToDb(_activeWallpaper);
+    notifyListeners();
+  }
+
+  void removeText(String id) {
+    final updatedTexts = _activeWallpaper.texts
+        .where((t) => t.id != id)
+        .toList();
+    _activeWallpaper = _activeWallpaper.copyWith(texts: updatedTexts);
+    _saveWallpaperToDb(_activeWallpaper);
+    notifyListeners();
+  }
+
+  void clearAllTexts() {
+    _activeWallpaper = _activeWallpaper.copyWith(texts: []);
+    _saveWallpaperToDb(_activeWallpaper);
     notifyListeners();
   }
 }

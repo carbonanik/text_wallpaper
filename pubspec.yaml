@@ -22,6 +22,9 @@ dependencies:
   wallpaper_manager_plus: ^2.0.1
   shared_preferences: ^2.2.2
   cached_network_image: ^3.4.1
+  intl: ^0.20.2
+  sembast: ^3.8.6
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:

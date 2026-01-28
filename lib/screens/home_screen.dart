@@ -1,380 +1,422 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:gal/gal.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:wallpaper_manager_plus/wallpaper_manager_plus.dart';
-import 'dart:io';
-import '../providers/todo_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../providers/wallpaper_provider.dart';
+import '../theme/app_theme.dart';
+import '../widgets/glass_container.dart';
 import '../widgets/wallpaper_preview.dart';
-import '../widgets/style_selector.dart';
+import 'editor_screen.dart';
+import 'preview_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _todoController = TextEditingController();
-  final ScreenshotController _screenshotController = ScreenshotController();
-  bool _isSaving = false;
-
-  @override
-  void dispose() {
-    _todoController.dispose();
-    super.dispose();
-  }
-
-  void _addTodo() {
-    if (_todoController.text.isNotEmpty) {
-      Provider.of<TodoProvider>(
-        context,
-        listen: false,
-      ).addTodo(_todoController.text);
-      _todoController.clear();
-    }
-  }
-
-  Future<void> _saveWallpaper() async {
-    setState(() => _isSaving = true);
-    try {
-      // Request permissions
-      if (!await Permission.photos.request().isGranted &&
-          !await Permission.storage.request().isGranted) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Permission denied')));
-        }
-        return;
-      }
-
-      // Capture screenshot
-      final directory = await getTemporaryDirectory();
-
-      final image = await _screenshotController.captureAndSave(
-        directory.path,
-        fileName: 'wallpaper_${DateTime.now().millisecondsSinceEpoch}.png',
-        pixelRatio: 3.0, // High quality
-      );
-
-      if (image != null) {
-        // Save to gallery using gal
-        await Gal.putImage(image);
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Wallpaper saved to gallery! Setting wallpaper...'),
-            ),
-          );
-        }
-
-        // Set wallpaper
-        try {
-          final wallpaperManager = WallpaperManagerPlus();
-          await wallpaperManager.setWallpaper(
-            File(image),
-            WallpaperManagerPlus.homeScreen,
-          );
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Wallpaper set successfully!')),
-            );
-          }
-        } catch (e) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error setting wallpaper: $e')),
-            );
-          }
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error saving wallpaper: $e')));
-      }
-    } finally {
-      setState(() => _isSaving = false);
-    }
-  }
-
-  void _showAddTaskDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withValues(alpha: 0.95),
-                      Colors.white.withValues(alpha: 0.85),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.add_task,
-                          size: 24,
-                          color: Colors.grey.shade700,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Add Sticky',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade800,
-                              ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    TextField(
-                      controller: _todoController,
-                      style: TextStyle(color: Colors.grey.shade800),
-                      cursorColor: Theme.of(context).primaryColor,
-                      decoration: InputDecoration(
-                        hintText: 'What needs to be done?',
-                        hintStyle: TextStyle(color: Colors.grey.shade500),
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade200,
-                            width: 1.5,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade200,
-                            width: 1.5,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 2,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
-                      ),
-                      autofocus: true,
-                      onSubmitted: (_) {
-                        _addTodo();
-                        Navigator.pop(context);
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.grey.shade600,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
-                            ),
-                          ),
-                          child: const Text('Cancel'),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: () {
-                            _addTodo();
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Add',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _clearAllTodos() {
-    final todoProvider = Provider.of<TodoProvider>(context, listen: false);
-    if (todoProvider.todos.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('No tasks to clear')));
-      return;
-    }
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Clear All Tasks'),
-        content: const Text('Are you sure you want to clear all tasks?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              todoProvider.clearAllTodos();
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('All tasks cleared')),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Clear All'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Wallpaper Preview (Background)
-          Screenshot(
-            controller: _screenshotController,
-            child: const WallpaperPreview(),
-          ),
+      backgroundColor: AppColors.background,
+      body: Stack(children: [_buildBody(context), _buildFAB(context)]),
+    );
+  }
 
-          // UI Overlay
-          SafeArea(
+  Widget _buildBody(BuildContext context) {
+    return SafeArea(
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                      'BrainPaper',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: _clearAllTodos,
-                        icon: const Icon(Icons.cleaning_services_outlined),
-                        // label: const Text('Clear All'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade400,
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        onPressed: _isSaving ? null : _saveWallpaper,
-                        icon: _isSaving
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.wallpaper),
-                        // label: const Text('Set Wallpaper'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: _buildHeader(context),
             ),
           ),
-
-          // Style Selector Bottom Sheet (Draggable)
-          StyleSelector(),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildActiveWallpaper(context),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+              child: _buildGalleryHeader(context),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            sliver: _buildWallpaperGallery(context),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddTaskDialog,
-        icon: const Icon(Icons.sticky_note_2_rounded),
-        label: const Text('Sticky'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'My Wall',
+              style: GoogleFonts.getFont(
+                'Inter',
+                textStyle: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.foreground,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Manage your brain papers',
+              style: TextStyle(fontSize: 14, color: AppColors.mutedForeground),
+            ),
+          ],
+        ),
+        Container(
+          height: 44,
+          width: 44,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: AppColors.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.settings_outlined,
+            color: AppColors.foreground,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActiveWallpaper(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'CURRENTLY EDITING',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.mutedForeground,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PreviewScreen(),
+                    ),
+                  );
+                },
+                child: const Row(
+                  children: [
+                    Text(
+                      'Preview',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(
+                      Icons.visibility_outlined,
+                      size: 14,
+                      color: AppColors.primary,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EditorScreen()),
+            );
+          },
+          child: Container(
+            height: 280,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                const ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(32)),
+                  child: WallpaperPreview(useScale: true),
+                ),
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                  child: GlassContainer(
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: BorderRadius.circular(20),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 36,
+                          width: 36,
+                          decoration: const BoxDecoration(
+                            color: AppColors.yellowAccent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit_note_rounded,
+                            size: 20,
+                            color: Color(0xFF78350F),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Canvas Status',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            Text(
+                              'Live Editing',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGalleryHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'My Other Wallpapers',
+          style: GoogleFonts.getFont(
+            'Inter',
+            textStyle: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.foreground,
+            ),
+          ),
+        ),
+        const Icon(
+          Icons.grid_view_rounded,
+          size: 20,
+          color: AppColors.mutedForeground,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWallpaperGallery(BuildContext context) {
+    final provider = context.watch<WallpaperProvider>();
+    final activeId = provider.activeWallpaper.id;
+    final wallpapers = provider.savedWallpapers
+        .where((w) => w.id != activeId)
+        .toList();
+
+    if (wallpapers.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Container(
+          padding: const EdgeInsets.all(40),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: const Column(
+            children: [
+              Icon(Icons.wallpaper_rounded, size: 48, color: AppColors.muted),
+              SizedBox(height: 16),
+              Text(
+                'No saved wallpapers yet',
+                style: TextStyle(
+                  color: AppColors.mutedForeground,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 0.75,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final wp = wallpapers[index];
+        return GestureDetector(
+          onTap: () {
+            context.read<WallpaperProvider>().setActiveWallpaper(wp);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EditorScreen()),
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.border),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                WallpaperPreview(wallpaper: wp, useScale: true),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    color: Colors.black.withValues(alpha: 0.6),
+                    child: Text(
+                      wp.name ?? 'Untitled',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }, childCount: wallpapers.length),
+    );
+  }
+
+  Widget _buildFAB(BuildContext context) {
+    return Positioned(
+      bottom: 40,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: GestureDetector(
+          onTap: () async {
+            // Create a brand new wallpaper
+            await context.read<WallpaperProvider>().createNew();
+
+            if (context.mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EditorScreen()),
+              );
+            }
+          },
+          child: Container(
+            height: 64,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+              border: Border.all(color: Colors.white, width: 4),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add_rounded, color: Colors.white, size: 28),
+                SizedBox(width: 12),
+                Text(
+                  'CREATE NEW',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -2,94 +2,107 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../providers/todo_provider.dart';
 import '../providers/wallpaper_provider.dart';
+import '../models/wallpaper_model.dart';
 
 class WallpaperPreview extends StatelessWidget {
-  const WallpaperPreview({super.key});
+  final WallpaperModel? wallpaper;
+  final bool useScale;
+
+  const WallpaperPreview({super.key, this.wallpaper, this.useScale = true});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<TodoProvider, WallpaperProvider>(
-      builder: (context, todoProvider, wallpaperProvider, child) {
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: wallpaperProvider.style == WallpaperStyle.solid
-                ? wallpaperProvider.backgroundColor
-                : null,
-            gradient: wallpaperProvider.style == WallpaperStyle.gradient
-                ? LinearGradient(
-                    colors: wallpaperProvider.gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : null,
-            image: wallpaperProvider.style == WallpaperStyle.pattern
-                ? DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      WallpaperProvider.artImages[wallpaperProvider
-                          .selectedArtIndex],
-                    ),
-                    fit: BoxFit.cover,
-                  )
-                : null,
-          ),
-          child: Stack(
-            children: [
-              // Overlay for patterns
-              if (wallpaperProvider.style == WallpaperStyle.pattern)
-                Container(
-                  color: Colors.black.withOpacity(
-                    wallpaperProvider.overlayOpacity,
-                  ),
-                ),
+    // If no wallpaper is provided, watch the active one from the provider
+    final activeWallpaper = context.watch<WallpaperProvider>().activeWallpaper;
+    final wp = wallpaper ?? activeWallpaper;
+    final texts = wp.texts;
 
-              // Content
-              Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (todoProvider.todos.isEmpty)
-                        Text(
-                          "No Tasks",
-                          style: GoogleFonts.getFont(
-                            wallpaperProvider.fontFamily,
-                            color: wallpaperProvider.textColor.withOpacity(0.5),
-                            fontSize: wallpaperProvider.fontSize,
+    final width = MediaQuery.of(context).size.width;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double scale = useScale ? (constraints.maxWidth / width) : 1.0;
+        final double scaledFontSize = wp.fontSize * scale;
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background Layer
+            _buildBackground(wp),
+
+            // Text Layer
+            Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24 * scale),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (texts.isEmpty)
+                      Text(
+                        "BrainPaper",
+                        style: GoogleFonts.getFont(
+                          wp.fontFamily,
+                          textStyle: TextStyle(
+                            fontSize: scaledFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Color(wp.textColor),
                           ),
-                        )
-                      else
-                        ...todoProvider.todos
-                            .where((t) => !t.isDone)
-                            .map(
-                              (todo) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                ),
-                                child: Text(
-                                  todo.text,
-                                  textAlign: wallpaperProvider.textAlign,
-                                  style: GoogleFonts.getFont(
-                                    wallpaperProvider.fontFamily,
-                                    color: wallpaperProvider.textColor,
-                                    fontSize: wallpaperProvider.fontSize,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                        ),
+                      )
+                    else
+                      ...texts.map(
+                        (item) => Padding(
+                          padding: EdgeInsets.symmetric(vertical: 4 * scale),
+                          child: Text(
+                            item.text,
+                            textAlign: TextAlign.values[wp.textAlign],
+                            style: GoogleFonts.getFont(
+                              wp.fontFamily,
+                              textStyle: TextStyle(
+                                fontSize: scaledFontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Color(wp.textColor),
                               ),
                             ),
-                    ],
-                  ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
+  }
+
+  Widget _buildBackground(WallpaperModel wp) {
+    switch (wp.style) {
+      case WallpaperStyle.solid:
+        return Container(color: Color(wp.backgroundColor));
+      case WallpaperStyle.gradient:
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: wp.gradientColors.map((c) => Color(c)).toList(),
+            ),
+          ),
+        );
+      case WallpaperStyle.pattern:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            CachedNetworkImage(
+              imageUrl: WallpaperProvider.artImages[wp.selectedArtIndex],
+              fit: BoxFit.cover,
+            ),
+            Container(color: Colors.black.withValues(alpha: wp.overlayOpacity)),
+          ],
+        );
+    }
   }
 }
