@@ -51,7 +51,7 @@ Yeah, we built this for you (and us).
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/text_wallpaper.git
+   git clone https://github.com/carbonanik/text_wallpaper.git
    cd text_wallpaper
    ```
 
